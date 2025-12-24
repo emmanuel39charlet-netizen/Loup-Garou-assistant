@@ -1,0 +1,140 @@
+index.html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Loup-Garou – Assistant MJ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            background-color: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: #f5c16c;
+        }
+
+        .box {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        input, select, button {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 6px;
+            border: none;
+        }
+
+        button {
+            background-color: #f5c16c;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button.secondary {
+            background-color: #444;
+            color: #eee;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🐺 Assistant du Maître du Jeu</h1>
+
+<div class="box">
+    <h2>1️⃣ Ajouter des joueurs</h2>
+
+    <input type="text" id="name" placeholder="Nom du joueur">
+
+    <select id="role">
+        <option>Villageois</option>
+        <option>Loup-Garou</option>
+        <option>Voyante</option>
+        <option>Sorcière</option>
+        <option>Cupidon</option>
+        <option>Chasseur</option>
+    </select>
+
+    <br>
+    <button onclick="addPlayer()">Ajouter</button>
+
+    <ul id="players"></ul>
+</div>
+
+<div class="box">
+    <h2>2️⃣ Phase de nuit</h2>
+
+    <p id="nightText">Clique sur “Commencer la nuit”.</p>
+
+    <button onclick="startNight()">Commencer la nuit</button>
+    <button class="secondary" onclick="nextRole()">Suivant</button>
+</div>
+
+<script>
+    const players = [];
+    const order = ["Cupidon", "Voyante", "Loup-Garou", "Sorcière", "Chasseur"];
+    let index = -1;
+
+    function addPlayer() {
+        const name = document.getElementById("name").value;
+        const role = document.getElementById("role").value;
+
+        if (name === "") return;
+
+        players.push({ name: name, role: role, alive: true });
+        document.getElementById("name").value = "";
+        showPlayers();
+    }
+
+    function showPlayers() {
+        const list = document.getElementById("players");
+        list.innerHTML = "";
+
+        players.forEach(p => {
+            const li = document.createElement("li");
+            li.textContent = p.name + " — " + p.role;
+            list.appendChild(li);
+        });
+    }
+
+    function startNight() {
+        index = -1;
+        nextRole();
+    }
+
+    function nextRole() {
+        index++;
+
+        if (index >= order.length) {
+            document.getElementById("nightText").textContent = "🌅 Le jour se lève.";
+            return;
+        }
+
+        const role = order[index];
+        const present = players.some(p => p.role === role && p.alive);
+
+        if (!present) {
+            nextRole();
+            return;
+        }
+
+        document.getElementById("nightText").textContent =
+            "🌙 " + role + ", réveillez-vous.";
+    }
+</script>
+
+</body>
+</html>
